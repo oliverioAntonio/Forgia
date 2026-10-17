@@ -636,7 +636,7 @@ h3 {
       rgba(6, 6, 7, 0.56) 100%
     ),
     linear-gradient(180deg, rgba(6, 6, 7, 0.72) 0%, rgba(6, 6, 7, 0.08) 34%, rgba(6, 6, 7, 0.95) 100%),
-    url("/forge-hero.png") center 42% / cover no-repeat;
+    var(--hero-image) center 42% / cover no-repeat;
   filter: saturate(0.92) contrast(1.1);
   animation: heroDrift 28s ease-in-out infinite alternate;
 }
@@ -2093,7 +2093,7 @@ h3 {
         rgba(6, 6, 7, 0.34) 32%,
         rgba(6, 6, 7, 0.95) 92%
       ),
-      url("/forge-hero.png") 64% center / cover no-repeat;
+      var(--hero-image) 64% center / cover no-repeat;
   }
 
   .hero__actions .button {

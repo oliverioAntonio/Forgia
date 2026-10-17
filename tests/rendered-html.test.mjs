@@ -1,26 +1,43 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+import test, { after } from "node:test";
 
+import { spawn } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { setTimeout as sleep } from "node:timers/promises";
+
+const cli = new URL("../node_modules/vinext/dist/cli.js", import.meta.url);
+const port = 4313;
+let server;
+let cached;
+
+// Usa il server di produzione vero (`vinext start`) sulla build in dist/.
 async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
+  if (!server) {
+    server = spawn(process.execPath, [fileURLToPath(cli), "start", "-p", String(port)], {
+      stdio: "ignore",
+    });
+  }
+  for (let attempt = 0; attempt < 40; attempt++) {
+    try {
+      const response = await fetch(`http://127.0.0.1:${port}/`, {
+        headers: { accept: "text/html" },
+      });
+      if (response.ok) {
+        cached ??= await response.text();
+        return new Response(cached, {
+          status: response.status,
+          headers: response.headers,
+        });
+      }
+    } catch {
+      // il server si sta ancora avviando: riprova
+    }
+    await sleep(500);
+  }
+  throw new Error("Il server di produzione non risponde");
 }
+
+after(() => server?.kill());
 
 test("server-renders the Arte del Ferro showcase", async () => {
   const response = await render();

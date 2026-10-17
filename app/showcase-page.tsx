@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Counter, Embers, useActiveSection, useSiteEffects } from "./effects";
 import { GalleryArtwork, ServiceIcon } from "./gallery-art";
+import { asset } from "./site-config";
 import type { Language, SiteContent, Theme } from "./site-content";
 import {
   content as siteContent,
@@ -192,14 +193,19 @@ export function ShowcasePage() {
     <div
       className={`site-shell site-shell--${theme}`}
       ref={shellRef}
-      style={{ "--progress": 0 } as CSSProperties}
+      style={
+        {
+          "--progress": 0,
+          "--hero-image": `url("${asset("/forge-hero.png")}")`,
+        } as CSSProperties
+      }
     >
       <header className={scrolled ? "site-header site-header--stuck" : "site-header"}>
         <div className="site-header__inner">
           <a className="brand" href="#top" aria-label="Arte del Ferro">
             <img
               className="brand__logo"
-              src="/logo-arte-del-ferro-horizontal.png"
+              src={asset("/logo-arte-del-ferro-horizontal.png")}
               alt="L'arte del Ferro"
               width={216}
               height={72}
@@ -323,7 +329,7 @@ export function ShowcasePage() {
                 </textPath>
               </text>
             </svg>
-            <img src="/logo-arte-del-ferro-square.png" alt="" width={120} height={120} />
+            <img src={asset("/logo-arte-del-ferro-square.png")} alt="" width={120} height={120} />
           </div>
 
           <div className="hero__foot">
@@ -369,7 +375,7 @@ export function ShowcasePage() {
             <div className="intro__frame">
               <img
                 data-parallax="0.07"
-                src="/forge-hero.png"
+                src={asset("/forge-hero.png")}
                 alt={
                   language === "it"
                     ? "Lavorazione del ferro incandescente in officina"
@@ -379,7 +385,7 @@ export function ShowcasePage() {
               />
               <figcaption>
                 <img
-                  src="/logo-arte-del-ferro-square.png"
+                  src={asset("/logo-arte-del-ferro-square.png")}
                   alt=""
                   width={120}
                   height={120}
@@ -636,7 +642,7 @@ export function ShowcasePage() {
         <div className="site-footer__inner">
           <div className="site-footer__brand">
             <img
-              src="/logo-arte-del-ferro-horizontal.png"
+              src={asset("/logo-arte-del-ferro-horizontal.png")}
               alt="L'arte del Ferro"
               width={200}
               height={66}

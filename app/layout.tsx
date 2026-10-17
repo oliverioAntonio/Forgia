@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import "./globals.css";
+import { asset, basePath, siteUrl } from "./site-config";
 
 // NB: in questo setup (vinext + Vite) `next/font` non emette alcun @font-face,
 // quindi i font vengono caricati esplicitamente nel <head>.
@@ -11,13 +11,8 @@ const fontsHref =
 // visibile. Eseguito prima del primo paint per evitare lampi.
 const enhanceScript = "document.documentElement.classList.add('js')";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const host = headersList.get("x-forwarded-host") ?? headersList.get("host");
-  const protocol =
-    headersList.get("x-forwarded-proto") ??
-    (host?.includes("localhost") ? "http" : "https");
-  const baseUrl = host ? `${protocol}://${host}` : "https://artedelferro.it";
+export function generateMetadata(): Metadata {
+  const baseUrl = siteUrl;
   const title = "Arte del Ferro di Marco Marasco | Fabbro a Cutro (KR)";
   const description =
     "Officina di ferro battuto a Cutro: cancelli, ringhiere, inferriate, scale e restauri forgiati a mano su misura. Sopralluoghi e preventivi in provincia di Crotone.";
@@ -35,11 +30,11 @@ export async function generateMetadata(): Promise<Metadata> {
       "officina ferro Calabria",
     ],
     alternates: {
-      canonical: "/",
+      canonical: basePath || "/",
     },
     icons: {
-      icon: "/favicon.svg",
-      shortcut: "/favicon.svg",
+      icon: asset("/favicon.svg"),
+      shortcut: asset("/favicon.svg"),
     },
     openGraph: {
       title,
@@ -49,7 +44,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "Arte del Ferro di Marco Marasco",
       images: [
         {
-          url: `${baseUrl}/og.png`,
+          url: `${baseUrl}${asset("/og.png")}`,
           width: 1200,
           height: 630,
           alt: title,
@@ -60,7 +55,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: "summary_large_image",
       title,
       description,
-      images: [`${baseUrl}/og.png`],
+      images: [`${baseUrl}${asset("/og.png")}`],
     },
   };
 }

@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// NB: in questo setup (vinext + Vite) `next/font` non emette alcun @font-face,
+// quindi i font vengono caricati esplicitamente nel <head>.
+const fontsHref =
+  "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&display=swap";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Abilita le animazioni d'ingresso solo se il JS gira: senza, tutto resta
+// visibile. Eseguito prima del primo paint per evitare lampi.
+const enhanceScript = "document.documentElement.classList.add('js')";
 
 export async function generateMetadata(): Promise<Metadata> {
   const headersList = await headers();
@@ -20,14 +18,25 @@ export async function generateMetadata(): Promise<Metadata> {
     headersList.get("x-forwarded-proto") ??
     (host?.includes("localhost") ? "http" : "https");
   const baseUrl = host ? `${protocol}://${host}` : "https://artedelferro.it";
-  const title = "Arte del Ferro di Marco Marasco";
+  const title = "Arte del Ferro di Marco Marasco | Fabbro a Cutro (KR)";
   const description =
-    "Lavorazioni artigianali in ferro battuto, cancelli, ringhiere, inferriate e opere su misura.";
+    "Officina di ferro battuto a Cutro: cancelli, ringhiere, inferriate, scale e restauri forgiati a mano su misura. Sopralluoghi e preventivi in provincia di Crotone.";
 
   return {
     metadataBase: new URL(baseUrl),
     title,
     description,
+    keywords: [
+      "fabbro Cutro",
+      "ferro battuto Crotone",
+      "cancelli in ferro battuto",
+      "ringhiere su misura",
+      "inferriate di sicurezza",
+      "officina ferro Calabria",
+    ],
+    alternates: {
+      canonical: "/",
+    },
     icons: {
       icon: "/favicon.svg",
       shortcut: "/favicon.svg",
@@ -36,6 +45,8 @@ export async function generateMetadata(): Promise<Metadata> {
       title,
       description,
       type: "website",
+      locale: "it_IT",
+      siteName: "Arte del Ferro di Marco Marasco",
       images: [
         {
           url: `${baseUrl}/og.png`,
@@ -60,12 +71,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html lang="it" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: enhanceScript }} />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link rel="stylesheet" href={fontsHref} />
+      </head>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }
